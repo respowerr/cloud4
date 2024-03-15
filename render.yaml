@@ -1,0 +1,78 @@
+services:
+  # A Docker web service
+  - type: web
+    name: webdis
+    runtime: docker
+    repo: https://github.com/render-examples/webdis.git # optional
+    region: europe # optional (defaults to oregon)
+    plan: free # optional (defaults to starter instance type)
+    branch: main # optional (defaults to master)
+    rootDir: webdis
+    dockerCommand: ./webdis.sh # optional (defaults to Dockerfile command)
+    numInstances: 3 # optional (defaults to 1)
+    healthCheckPath: /
+    registryCredential: # optional (defaults to no credential)
+      fromRegistryCreds:
+        name: my-credentials
+    envVars:
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: lightning
+          property: host # available properties are listed below
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: lightning
+          property: port
+      - fromGroup: conc-settings
+
+    autoDeploy: false # optional
+  # A background worker that consumes a queue
+  - type: worker
+    name: queue
+    runtime: docker
+    dockerfilePath: ./sub/Dockerfile # optional
+    dockerContext: ./sub/src # optional
+    branch: queue # optional
+  # A static site
+  - type: web
+    name: my blog
+    runtime: static
+    buildCommand: yarn build
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true # optional
+    buildFilter:
+      paths:
+      - src/**/*.js
+      ignoredPaths:
+      - src/**/*.test.js
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: sameorigin
+    routes:
+      - type: redirect
+        source: /old
+        destination: /new
+      - type: rewrite
+        source: /a/*
+        destination: /a
+  # A Redis instance
+  - type: redis
+    name: lightning
+    ipAllowList: # required
+      - source: 0.0.0.0/0
+        description: everywhere
+    plan: free # optional (defaults to starter instance type)
+    maxmemoryPolicy: noeviction # optional (defaults to allkeys-lru)
+
+databases:
+  - name: elephant
+  - name: private database
+    databaseName: private
+    ipAllowList: [] # only allow internal connections
+  - name: highly available database
+    plan: pro
+    highAvailability: # optional
+      enabled: true
