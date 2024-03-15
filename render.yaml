@@ -1,39 +1,10 @@
 services:
-  # A Docker web service
   - type: web
-    name: webdis
-    runtime: docker
-    region: frankfurt # optional (defaults to oregon)
-    plan: free # optional (defaults to starter instance type)
-    rootDir: webdis
-    healthCheckPath: /
-    envVars:
-      - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: lightning
-          property: host # available properties are listed below
-      - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: lightning
-          property: port
-      - fromGroup: conc-settings
-
-    autoDeploy: false # optional
-  # A background worker that consumes a queue
-  - type: worker
-    name: queue
-    runtime: docker
-    dockerfilePath: ./sub/Dockerfile # optional
-    dockerContext: ./sub/src # optional
-    branch: queue # optional
-
-  # A Redis instance
-  - type: redis
-    name: lightning
-    ipAllowList: # required
-      - source: 0.0.0.0/0
-        description: everywhere
-    plan: free # optional (defaults to starter instance type)
-    maxmemoryPolicy: noeviction # optional (defaults to allkeys-lru)
+    name: TEST
+    runtime: node
+    repo: https://github.com/respowerr/cloud4
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm run start
