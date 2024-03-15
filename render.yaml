@@ -68,8 +68,7 @@ services:
     maxmemoryPolicy: noeviction # optional (defaults to allkeys-lru)
 
 databases:
-  - name: elephant
-  - name: private database
+  - name: CALLIDOS
     databaseName: private
     ipAllowList: [] # only allow internal connections
   - name: highly available database
