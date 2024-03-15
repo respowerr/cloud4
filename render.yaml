@@ -7,9 +7,6 @@ services:
     plan: free # optional (defaults to starter instance type)
     rootDir: webdis
     healthCheckPath: /
-    registryCredential: # optional (defaults to no credential)
-      fromRegistryCreds:
-        name: my-credentials
     envVars:
       - key: REDIS_HOST
         fromService:
@@ -31,29 +28,7 @@ services:
     dockerfilePath: ./sub/Dockerfile # optional
     dockerContext: ./sub/src # optional
     branch: queue # optional
-  # A static site
-  - type: web
-    name: my blog
-    runtime: static
-    buildCommand: yarn build
-    staticPublishPath: ./build
-    pullRequestPreviewsEnabled: true # optional
-    buildFilter:
-      paths:
-      - src/**/*.js
-      ignoredPaths:
-      - src/**/*.test.js
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: sameorigin
-    routes:
-      - type: redirect
-        source: /old
-        destination: /new
-      - type: rewrite
-        source: /a/*
-        destination: /a
+
   # A Redis instance
   - type: redis
     name: lightning
@@ -66,8 +41,3 @@ services:
 databases:
   - name: CALLIDOS
     databaseName: private
-    ipAllowList: [] # only allow internal connections
-  - name: highly available database
-    plan: pro
-    highAvailability: # optional
-      enabled: true
