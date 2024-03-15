@@ -3,13 +3,9 @@ services:
   - type: web
     name: webdis
     runtime: docker
-    repo: https://github.com/render-examples/webdis.git # optional
     region: europe # optional (defaults to oregon)
     plan: free # optional (defaults to starter instance type)
-    branch: main # optional (defaults to master)
     rootDir: webdis
-    dockerCommand: ./webdis.sh # optional (defaults to Dockerfile command)
-    numInstances: 3 # optional (defaults to 1)
     healthCheckPath: /
     registryCredential: # optional (defaults to no credential)
       fromRegistryCreds:
